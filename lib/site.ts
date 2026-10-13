@@ -19,16 +19,22 @@ export const site = {
     postalCode: "506169",
     country: "IN",
   },
-  geo: { lat: 18.4334, lng: 79.8669 }, // VERIFY — approximate (plus code CVM8+72)
+  // Exact point decoded from the Google plus code CVM8+72 (7JCXCVM8+72).
+  geo: { lat: 18.423188, lng: 79.865063 },
   plusCode: "CVM8+72 Bhupalpally, Telangana",
   priceRange: "₹200–400 per person",
   // VERIFY — listing shows "Opens 12 pm, closes 11 pm"; confirm weekly schedule.
   hours: [{ days: "Monday – Sunday", time: "12:00 PM – 11:00 PM" }],
   services: ["Dine-in", "Takeaway"],
   rating: { value: 4.5, count: 26 }, // Google rating at time of build — update or remove
+  /** Google Maps place search by name — used for "Read all reviews". */
   mapsLink: "https://www.google.com/maps/search/?api=1&query=Sritara+Classic+Multi+Cuisine+Restaurant+Bhupalpally",
-  mapsEmbed:
-    "https://www.google.com/maps?q=Sritara+Classic+Multi+Cuisine+Restaurant,+Bhupalpally&output=embed",
+  /** Drops a pin exactly on the restaurant (plus code CVM8+72). */
+  pinLink: "https://www.google.com/maps/search/?api=1&query=18.423188%2C79.865063",
+  /** Turn-by-turn directions from the visitor's location to the restaurant. */
+  directionsLink: "https://www.google.com/maps/dir/?api=1&destination=18.423188%2C79.865063",
+  /** Embedded map centred and pinned on the restaurant. */
+  mapsEmbed: "https://www.google.com/maps?q=18.423188,79.865063&z=17&hl=en&output=embed",
   legal: {
     // VERIFY — legal entity, GSTIN and FSSAI licence must be filled in.
     entity: "Sritara Classic Multi Cuisine Restaurant",
