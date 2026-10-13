@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+<defs><radialGradient id="g" cx="50%" cy="45%" r="70%"><stop offset="0%" stop-color="#c8501f"/><stop offset="100%" stop-color="#0c0a09"/></radialGradient></defs>
+<rect width="800" height="1000" fill="url(#g)"/>
+<circle cx="400" cy="460" r="230" fill="none" stroke="#f5efe6" stroke-opacity=".25" stroke-width="2"/>
+<text x="400" y="880" text-anchor="middle" font-family="Georgia,serif" font-size="44" fill="#f5efe6">Natukodi Bagara</text>
+<text x="400" y="930" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#f5efe6" fill-opacity=".7">Placeholder — replace with a real photo</text>
+</svg>
