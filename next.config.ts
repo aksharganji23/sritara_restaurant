@@ -24,6 +24,10 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // Pin the project root so a stray package-lock.json in a parent folder
+  // (e.g. your user/home folder) isn't mistaken for this project's root.
+  turbopack: { root: process.cwd() },
+  outputFileTracingRoot: process.cwd(),
   poweredByHeader: false,
   reactStrictMode: true,
   images: { formats: ["image/avif", "image/webp"] },

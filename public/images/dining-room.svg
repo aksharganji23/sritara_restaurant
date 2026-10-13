@@ -1,7 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
-<defs><radialGradient id="g" cx="50%" cy="45%" r="70%"><stop offset="0%" stop-color="#4a4038"/><stop offset="100%" stop-color="#0c0a09"/></radialGradient></defs>
-<rect width="800" height="1000" fill="url(#g)"/>
-<circle cx="400" cy="460" r="230" fill="none" stroke="#f5efe6" stroke-opacity=".25" stroke-width="2"/>
-<text x="400" y="880" text-anchor="middle" font-family="Georgia,serif" font-size="44" fill="#f5efe6">Dining Room</text>
-<text x="400" y="930" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#f5efe6" fill-opacity=".7">Placeholder — replace with a real photo</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+<defs>
+<radialGradient id="bg" cx="50%" cy="50%" r="75%"><stop offset="0%" stop-color="#e9b44c" stop-opacity=".55"/><stop offset="55%" stop-color="#151210"/><stop offset="100%" stop-color="#0c0a09"/></radialGradient>
+<radialGradient id="food" cx="42%" cy="38%" r="70%"><stop offset="0%" stop-color="#4a4038"/><stop offset="100%" stop-color="#2b241f"/></radialGradient>
+<radialGradient id="plate" cx="45%" cy="40%" r="65%"><stop offset="0%" stop-color="#3a322b"/><stop offset="100%" stop-color="#14110f"/></radialGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="1200" height="1200" fill="url(#bg)"/>
+<line x1="300" y1="0" x2="300" y2="380" stroke="#4a4038" stroke-width="3"/>
+<circle cx="300" cy="470" r="160" fill="#e9b44c" opacity=".18" filter="url(#soft)"/>
+<path d="M230 440 Q300 360 370 440 Z" fill="#e9b44c"/>
+<ellipse cx="300" cy="445" rx="30" ry="10" fill="#fff4d6"/>
+<line x1="600" y1="0" x2="600" y2="380" stroke="#4a4038" stroke-width="3"/>
+<circle cx="600" cy="470" r="160" fill="#e9b44c" opacity=".18" filter="url(#soft)"/>
+<path d="M530 440 Q600 360 670 440 Z" fill="#e9b44c"/>
+<ellipse cx="600" cy="445" rx="30" ry="10" fill="#fff4d6"/>
+<line x1="900" y1="0" x2="900" y2="380" stroke="#4a4038" stroke-width="3"/>
+<circle cx="900" cy="470" r="160" fill="#e9b44c" opacity=".18" filter="url(#soft)"/>
+<path d="M830 440 Q900 360 970 440 Z" fill="#e9b44c"/>
+<ellipse cx="900" cy="445" rx="30" ry="10" fill="#fff4d6"/>
+<rect x="140" y="760" width="920" height="26" rx="13" fill="#4a3426"/>
+<rect x="200" y="786" width="20" height="260" fill="#3a2a1f"/><rect x="980" y="786" width="20" height="260" fill="#3a2a1f"/>
+<ellipse cx="330" cy="752" rx="80" ry="14" fill="#f5efe6" opacity=".85"/>
+<ellipse cx="600" cy="752" rx="80" ry="14" fill="#f5efe6" opacity=".85"/>
+<ellipse cx="870" cy="752" rx="80" ry="14" fill="#f5efe6" opacity=".85"/>
 </svg>

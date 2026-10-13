@@ -29,7 +29,7 @@ export function About() {
           <dl className="grid grid-cols-2 gap-5">
             {[
               { label: "Google rating", node: <Counter to={site.rating.value} decimals={1} suffix="★" /> },
-              { label: "Guest reviews", node: <Counter to={site.rating.count} suffix="+" /> },
+              { label: "Guest reviews", node: <Counter to={site.rating.count} /> },
               { label: "Hours open daily", node: <Counter to={11} /> },
               { label: "Cuisines", node: <Counter to={3} /> },
             ].map((s) => (
