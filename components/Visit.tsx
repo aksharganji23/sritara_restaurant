@@ -37,7 +37,15 @@ export function Visit() {
               <div>
                 <h3 className="font-bold text-cream">Phone</h3>
                 <a href={`tel:${site.phoneE164}`} className="text-gold underline underline-offset-4">{site.phoneDisplay}</a>
-              </div>
+                <a
+                  href={site.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 block text-gold underline underline-offset-4"
+                >
+                  Chat on WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                              </div>
             </li>
             <li className="flex gap-4">
               <Utensils aria-hidden="true" className="mt-1 size-6 shrink-0 text-gold" />

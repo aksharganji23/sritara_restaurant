@@ -3,14 +3,44 @@
  * ⚠️ Items marked VERIFY came from the public Google listing or are placeholders —
  * confirm them with the owner before going live.
  */
+import { RESTAURANT_LOCATION } from "./location";
+
+// ---------- Location helpers (edit coordinates in lib/location.ts, not here) ----------
+const PLUS_ALPHABET = "23456789CFGHJMPQRVWX";
+
+/** Encodes coordinates as a short Google plus code, e.g. "CVM8+72". */
+function toShortPlusCode(lat: number, lng: number): string {
+  let la = Math.floor((Math.min(Math.max(lat, -90), 89.9999999) + 90) * 8000);
+  let ln = Math.floor(((((lng + 180) % 360) + 360) % 360) * 8000);
+  let code = "";
+  for (let i = 0; i < 5; i++) {
+    code = PLUS_ALPHABET[la % 20] + PLUS_ALPHABET[ln % 20] + code;
+    la = Math.floor(la / 20);
+    ln = Math.floor(ln / 20);
+  }
+  return `${code.slice(4, 8)}+${code.slice(8)}`;
+}
+
+const { lat, lng, zoom } = RESTAURANT_LOCATION;
+const point = `${lat},${lng}`;
+const location = {
+  lat,
+  lng,
+  plusCode: toShortPlusCode(lat, lng),
+  pinLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(point)}`,
+  directionsLink: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(point)}`,
+  embedUrl: `https://www.google.com/maps?q=${point}&z=${zoom}&hl=en&output=embed`,
+};
+
 export const site = {
   name: "Sritara Classic",
   fullName: "Sritara Classic Multi Cuisine Restaurant",
   teluguName: "శ్రితర క్లాసిక్ మల్టీ కుసిన్ రెస్టారెంట్",
   tagline: "Multi-cuisine dining in the heart of Bhupalpally",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sritaraclassic.in", // VERIFY domain
-  phoneDisplay: "079896 64076",
-  phoneE164: "+917989664076",
+  phoneDisplay: "+91 99488 82244",
+  phoneE164: "+919948882244",
+    whatsapp: "https://wa.me/919948882244",
   email: "hello@sritaraclassic.in", // VERIFY — placeholder
   address: {
     street: "Bhupalpally Main Rd, near HP petrol bunk",
@@ -19,9 +49,9 @@ export const site = {
     postalCode: "506169",
     country: "IN",
   },
-  // Exact point decoded from the Google plus code CVM8+72 (7JCXCVM8+72).
-  geo: { lat: 18.423188, lng: 79.865063 },
-  plusCode: "CVM8+72 Bhupalpally, Telangana",
+  // 📍 Location is set in lib/location.ts: edit the coordinates there, not here.
+  geo: { lat: location.lat, lng: location.lng },
+  plusCode: `${location.plusCode} Bhupalpally, Telangana`,
   priceRange: "₹200–400 per person",
   // VERIFY — listing shows "Opens 12 pm, closes 11 pm"; confirm weekly schedule.
   hours: [{ days: "Monday – Sunday", time: "12:00 PM – 11:00 PM" }],
@@ -29,12 +59,9 @@ export const site = {
   rating: { value: 4.5, count: 26 }, // Google rating at time of build — update or remove
   /** Google Maps place search by name — used for "Read all reviews". */
   mapsLink: "https://www.google.com/maps/search/?api=1&query=Sritara+Classic+Multi+Cuisine+Restaurant+Bhupalpally",
-  /** Drops a pin exactly on the restaurant (plus code CVM8+72). */
-  pinLink: "https://www.google.com/maps/search/?api=1&query=18.423188%2C79.865063",
-  /** Turn-by-turn directions from the visitor's location to the restaurant. */
-  directionsLink: "https://www.google.com/maps/dir/?api=1&destination=18.423188%2C79.865063",
-  /** Embedded map centred and pinned on the restaurant. */
-  mapsEmbed: "https://www.google.com/maps?q=18.423188,79.865063&z=17&hl=en&output=embed",
+  pinLink: location.pinLink,
+  directionsLink: location.directionsLink,
+  mapsEmbed: location.embedUrl,
   legal: {
     // VERIFY — legal entity, GSTIN and FSSAI licence must be filled in.
     entity: "Sritara Classic Multi Cuisine Restaurant",
