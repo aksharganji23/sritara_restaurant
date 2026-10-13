@@ -38,9 +38,9 @@ export const site = {
   teluguName: "శ్రితర క్లాసిక్ మల్టీ కుసిన్ రెస్టారెంట్",
   tagline: "Multi-cuisine dining in the heart of Bhupalpally",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sritaraclassic.in", // VERIFY domain
-  phoneDisplay: "+91 99488 82244",
-  phoneE164: "+919948882244",
-    whatsapp: "https://wa.me/919948882244",
+  phoneDisplay: "+91 78937 79220",
+  phoneE164: "+917893779220",
+    whatsapp: "https://wa.me/917893779220",
   email: "hello@sritaraclassic.in", // VERIFY — placeholder
   address: {
     street: "Bhupalpally Main Rd, near HP petrol bunk",
