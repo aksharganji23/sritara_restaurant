@@ -31,8 +31,19 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   images: { formats: ["image/avif", "image/webp"] },
+  // Photo uploads from the admin (up to 10 MB) travel through a Server Action.
+  experimental: { serverActions: { bodySizeLimit: "11mb" } },
+  serverExternalPackages: ["sharp"],
   async headers() {
     return [
+      {
+        // Keep the admin area out of search engines and browser caches.
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "Cache-Control", value: "no-store" },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [

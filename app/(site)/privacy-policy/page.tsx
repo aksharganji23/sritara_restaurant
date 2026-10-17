@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, ContactBlock } from "@/components/LegalPage";
-import { site } from "@/lib/site";
+import { activeChannels } from "@/lib/notify";
+import { getSite } from "@/lib/content/get-site";
 
 export const metadata: Metadata = { title: "Privacy Policy", alternates: { canonical: "/privacy-policy" } };
 
-export default function Page() {
+export default async function Page() {
+  const { site, settings } = await getSite();
+  const channels = activeChannels(settings.alerts);
   return (
     <LegalPage title="Privacy Policy">
       <p>
@@ -26,7 +29,7 @@ export default function Page() {
       <table>
         <thead><tr><th>Data</th><th>Purpose</th><th>Kept for</th></tr></thead>
         <tbody>
-          <tr><td>Name, mobile number, booking date/time, party size, optional notes</td><td>To receive, confirm and manage your table request</td><td>Up to 30 days after your booking date, then deleted</td></tr>
+          <tr><td>Name, mobile number, booking date/time, party size, optional notes</td><td>To receive, confirm and manage your table request</td><td>Stored in our booking system and deleted automatically 30 days after your booking date</td></tr>
           <tr><td>IP address (transient)</td><td>To block automated spam on the booking form</td><td>Held in server memory only; not stored or logged</td></tr>
           <tr><td>Standard server logs kept by our hosting provider</td><td>Security and reliability of the website</td><td>As per the host&apos;s retention (typically ≤ 30 days)</td></tr>
         </tbody>
@@ -44,8 +47,13 @@ export default function Page() {
 
       <h2>4. Who we share it with</h2>
       <ul>
-        <li><strong>Hosting provider</strong> — [name, e.g. Vercel Inc.] hosts the website. {/* VERIFY */}</li>
-        <li><strong>Booking delivery service</strong> — [name of the webhook/notification tool, if used] passes your request to our staff. {/* VERIFY */}</li>
+        <li><strong>Hosting provider</strong> — Render Services, Inc. hosts the website.</li>
+        <li><strong>Database provider</strong> — Neon, Inc. stores booking requests and website content.</li>
+        <li>
+          <strong>Booking notification service</strong> — your booking details are sent to our staff&apos;s phone
+          using{" "}
+          {channels.length ? channels.join(" and ") : "a messaging service"}, so we can call you to confirm.
+        </li>
         <li><strong>Google</strong> — only if you choose to load the map. See our <Link href="/cookie-policy">Cookie Policy</Link>.</li>
         <li>Authorities, where required by law.</li>
       </ul>
@@ -72,9 +80,9 @@ export default function Page() {
 
       <h2>7. Security</h2>
       <p>
-        The site is served only over HTTPS with strict security headers. Booking data is not stored in a database on
-        this website; it is passed directly to our staff. No method of transmission is 100% secure, but we take
-        reasonable safeguards.
+        The site is served only over HTTPS with strict security headers. Booking requests are stored in an encrypted
+        database that only our staff can access through a password-protected admin area, and are deleted automatically
+        30 days after the booking date. No method of transmission is 100% secure, but we take reasonable safeguards.
       </p>
 
       <h2>8. Changes</h2>

@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowDown, Star } from "lucide-react";
-import { site } from "@/lib/site";
+import type { SiteInfo } from "@/lib/site";
 
-const words = ["Flavours", "of", "Telangana,", "and", "beyond."];
+type Props = Pick<SiteInfo, "name" | "heroTitle" | "heroHighlight" | "heroText" | "rating">;
 
-export function Hero() {
+export function Hero({ name, heroTitle, heroHighlight, heroText, rating }: Props) {
+  const words = heroTitle.split(/\s+/).filter(Boolean);
+  const highlight = heroHighlight.trim().toLowerCase();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "35%"]);
@@ -24,6 +26,7 @@ export function Hero() {
 
       <motion.div style={{ y, opacity: fade }} className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.2fr_1fr]">
         <div>
+{rating.show && (
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -32,17 +35,18 @@ export function Hero() {
           >
             <Star aria-hidden="true" className="size-4 fill-gold text-gold" />
             <span>
-              <span className="font-bold text-cream">{site.rating.value}</span> on Google · {site.rating.count} reviews
+              <span className="font-bold text-cream">{rating.value}</span> on Google · {rating.count} reviews
             </span>
           </motion.p>
+          )}
 
           <h1 id="hero-title" className="mt-6 font-display text-5xl leading-[1.05] font-medium text-cream sm:text-7xl lg:text-8xl">
-            <span className="sr-only">Sritara Classic — Flavours of Telangana, and beyond.</span>
+            <span className="sr-only">{name} — {heroTitle}</span>
             <span aria-hidden="true">
               {words.map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden pb-2 align-bottom">
                   <motion.span
-                    className={`mr-[0.25em] inline-block ${i === 2 ? "italic text-gold" : ""}`}
+                    className={`mr-[0.25em] inline-block ${highlight && w.toLowerCase() === highlight ? "italic text-gold" : ""}`}
                     initial={{ y: "110%" }}
                     animate={{ y: 0 }}
                     transition={{ duration: 0.9, delay: 0.15 + i * 0.09, ease: [0.22, 1, 0.36, 1] }}
@@ -60,8 +64,7 @@ export function Hero() {
             transition={{ delay: 0.9, duration: 0.8 }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-muted"
           >
-            Natukodi bagara, slow-cooked mutton, tandoor naans and Indo-Chinese favourites — served warm on
-            Bhupalpally Main Road. Dine in or take away.
+            {heroText}
           </motion.p>
 
           <motion.div

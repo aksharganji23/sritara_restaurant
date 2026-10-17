@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { legalLinks, navLinks, site } from "@/lib/site";
-import { Logo } from "./Logo";
+import { legalLinks, navLinks, type SiteInfo } from "@/lib/site";
+import { BrandLogo } from "./BrandLogo";
 
-export function Footer() {
+export function Footer({ site }: { site: SiteInfo }) {
   const year = new Date().getFullYear();
   return (
     <footer className="border-t border-line/60 bg-surface">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 md:grid-cols-4">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-3 text-gold">
-            <Logo className="size-10" />
-            <p className="font-display text-2xl text-cream">{site.fullName}</p>
-          </div>
-          <p lang="te" className="mt-2 text-muted">{site.teluguName}</p>
+                    <BrandLogo name={site.name} size="md" />
+          <p className="mt-4 font-display text-xl text-cream">{site.fullName}</p>
+          {site.teluguName && <p lang="te" className="mt-2 text-muted">{site.teluguName}</p>}
           <address className="mt-6 not-italic leading-relaxed text-muted">
             {site.address.street}
             <br />
@@ -21,6 +19,20 @@ export function Footer() {
             <a className="mt-2 inline-block text-gold underline underline-offset-4" href={`tel:${site.phoneE164}`}>
               {site.phoneDisplay}
             </a>
+            {site.whatsappLink && (
+              <>
+                {" · "}
+                <a className="text-gold underline underline-offset-4" href={site.whatsappLink} target="_blank" rel="noopener noreferrer">
+                  WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </>
+            )}
+            {site.email && (
+              <>
+                <br />
+                <a className="text-gold underline underline-offset-4" href={`mailto:${site.email}`}>{site.email}</a>
+              </>
+            )}
           </address>
         </div>
 
@@ -48,7 +60,9 @@ export function Footer() {
       </div>
       <div className="border-t border-line/60">
         <p className="mx-auto max-w-7xl px-5 py-6 text-sm text-muted sm:px-8">
-          © {year} {site.legal.entity}. All rights reserved. FSSAI Lic. No. {site.legal.fssai}
+          © {year} {site.legal.entity}. All rights reserved.
+          {site.legal.fssai && <> FSSAI Lic. No. {site.legal.fssai}.</>}
+          {site.legal.gstin && <> GSTIN {site.legal.gstin}.</>}
         </p>
       </div>
     </footer>

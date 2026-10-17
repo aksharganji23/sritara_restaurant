@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, ContactBlock } from "@/components/LegalPage";
-import { site } from "@/lib/site";
+import { getSite } from "@/lib/content/get-site";
 
 export const metadata: Metadata = { title: "Terms & Conditions", alternates: { canonical: "/terms" } };
 
-export default function Page() {
+export default async function Page() {
+  const { site } = await getSite();
   return (
     <LegalPage title="Terms & Conditions">
       <p>
@@ -16,7 +17,7 @@ export default function Page() {
       <h2>1. About us</h2>
       <p>
         This website is operated by {site.legal.entity}, {site.address.street}, {site.address.city},{" "}
-        {site.address.state} {site.address.postalCode}. FSSAI Licence No. {site.legal.fssai}.
+        {site.address.state} {site.address.postalCode}.{site.legal.fssai && <> FSSAI Licence No. {site.legal.fssai}.</>}
       </p>
 
       <h2>2. Menu, prices and information</h2>

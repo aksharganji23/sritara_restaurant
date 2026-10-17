@@ -2,6 +2,16 @@
 @import "@fontsource-variable/fraunces";
 @import "@fontsource-variable/manrope";
 
+/* Soft, rounded cut of Fraunces for the signboard-style logo (self-hosted). */
+@font-face {
+  font-family: "Fraunces Soft";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/fraunces-soft.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /*
  * Dark-only theme. Every text/background pair below is checked by
  * `npm run contrast` (WCAG 2.2 AA: 4.5:1 body text, 3:1 large text & UI).
@@ -78,7 +88,52 @@ body {
   50% { opacity: 1; transform: scale(1.04); }
 }
 .animate-flicker { animation: flicker 3.2s ease-in-out infinite; }
-
+/* ---------- Signboard logo (neon) ---------- */
+.brand-main {
+  font-family: "Fraunces Soft", var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "SOFT" 100, "opsz" 72;
+  letter-spacing: 0.01em;
+  color: #fffaf2;
+  white-space: nowrap;
+  text-shadow: 0 0 2px #fff, 0 0 10px rgba(255, 255, 255, 0.55), 0 0 22px rgba(120, 170, 255, 0.35);
+  animation: neon-on 1.6s ease-out both;
+}
+/* Dotless ı with a red drop above it, like the sign */
+.brand-i { position: relative; }
+.brand-i::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.09em;
+  width: 0.2em;
+  height: 0.27em;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 50% 50% 50%;
+  background: #ff3b2f;
+  box-shadow: 0 0 6px rgba(255, 59, 47, 0.9);
+}
+.brand-accent {
+  margin-top: 0.1em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  padding-left: 0.18em;
+  color: #ff6a55;
+  -webkit-text-stroke: 0.6px #ffb4a8;
+  text-shadow: 0 0 6px rgba(255, 70, 50, 0.85), 0 0 16px rgba(255, 50, 30, 0.45);
+  white-space: nowrap;
+  animation: neon-on 1.6s 0.25s ease-out both;
+}
+@keyframes neon-on {
+  0% { opacity: 0.15; }
+  12% { opacity: 1; }
+  18% { opacity: 0.35; }
+  26% { opacity: 1; }
+  32% { opacity: 0.6; }
+  40%, 100% { opacity: 1; }
+}
 /* Long-form legal pages */
 .prose-legal h2 { font-family: var(--font-display); font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: .75rem; color: var(--color-cream); }
 .prose-legal h3 { font-weight: 700; margin-top: 1.5rem; margin-bottom: .5rem; color: var(--color-cream); }

@@ -1,22 +1,32 @@
 "use server";
 import { headers } from "next/headers";
 import { reservationSchema, type FormState } from "@/lib/reservation-schema";
+import { notifyRestaurant } from "@/lib/notify";
+import { getSiteContent, insertBooking } from "@/lib/content/store";
+import { hasDatabase } from "@/lib/db";
+import { checkBookingTime } from "@/lib/content/hours";
 
-// Best-effort in-memory rate limit. On serverless hosting each instance has its
-// own memory — use Upstash/Redis or your host's firewall for real protection.
+// Best-effort in-memory rate limit (Render runs one instance, so this holds).
 const hits = new Map<string, { count: number; reset: number }>();
 const LIMIT = 5;
 const WINDOW_MS = 10 * 60 * 1000;
 
 function rateLimited(key: string) {
   const now = Date.now();
+  for (const [k, v] of hits) if (v.reset < now) hits.delete(k); // keep memory bounded
   const entry = hits.get(key);
-  if (!entry || entry.reset < now) {
+  if (!entry) {
     hits.set(key, { count: 1, reset: now + WINDOW_MS });
     return false;
   }
   entry.count++;
   return entry.count > LIMIT;
+}
+
+/** Days between today (India time) and an ISO date. */
+function daysFromToday(iso: string) {
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+  return Math.round((Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86_400_000);
 }
 
 export async function reserve(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -35,43 +45,55 @@ export async function reserve(_prev: FormState, formData: FormData): Promise<For
     return { status: "error", message: "Too many requests. Please try again later or call us.", values };
   }
 
+  const { settings } = await getSiteContent();
+  const rules = settings.booking;
+  if (!rules.enabled) {
+    return { status: "error", message: "Online booking is paused right now. Please call us to reserve.", values };
+  }
+
   const parsed = reservationSchema.safeParse(raw);
+  const errors: FormState["errors"] = {};
   if (!parsed.success) {
-    const errors: FormState["errors"] = {};
     for (const issue of parsed.error.issues) {
       const key = issue.path[0] as keyof NonNullable<FormState["errors"]>;
       if (key && !errors[key]) errors[key] = issue.message;
     }
+  } else {
+    const d = parsed.data;
+    const ahead = daysFromToday(d.date);
+    if (ahead < 0 || ahead > rules.maxDaysAhead) errors.date = `Choose a date between today and ${rules.maxDaysAhead} days from now.`;
+    else {
+      const timeError = checkBookingTime(settings.hours.days, d.date, d.time, rules.lastSeatingMinutes);
+      if (timeError) errors.time = timeError;
+    }
+    if (d.guests > rules.maxGuests) errors.guests = `For more than ${rules.maxGuests} guests, please call us.`;
+  }
+  if (!parsed.success || Object.keys(errors).length) {
     return { status: "error", message: "Please fix the highlighted fields.", errors, values };
   }
 
-  const webhook = process.env.RESERVATION_WEBHOOK_URL;
-  if (!webhook) {
-    return {
-      status: "error",
-      message: "Online booking isn't switched on yet. Please call us to reserve.",
-      values,
-    };
+  const { consent: _c, ...booking } = parsed.data;
+
+  // 1) Save to the database so it shows in Admin → Bookings.
+  let saved = false;
+  if (hasDatabase()) {
+    try {
+      await insertBooking(booking);
+      saved = true;
+    } catch (err) {
+      console.error("Saving booking failed:", err instanceof Error ? err.message : "unknown");
+    }
   }
 
-  try {
-    const { consent: _c, ...booking } = parsed.data;
-    const res = await fetch(webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...booking, submittedAt: new Date().toISOString() }),
-      signal: AbortSignal.timeout(8000),
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error(`Webhook ${res.status}`);
-  } catch (err) {
-    // Log the failure, never the guest's personal data.
-    console.error("Reservation forwarding failed:", err instanceof Error ? err.message : "unknown");
+  // 2) Alert the restaurant's phone.
+  const { delivered } = await notifyRestaurant(booking, settings.alerts, settings.details.name);
+
+  if (!saved && delivered === 0) {
     return { status: "error", message: "We couldn't send your request. Please call us to book.", values };
   }
 
   return {
     status: "success",
-    message: `Thank you, ${parsed.data.name.split(" ")[0]}! This is a request, not a confirmation — we'll call you to confirm your table.`,
+    message: `Thank you, ${booking.name.split(" ")[0]}! This is a request, not a confirmation — we'll call you to confirm your table.`,
   };
 }

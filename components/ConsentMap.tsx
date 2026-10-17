@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { Map as MapIcon, Navigation } from "lucide-react";
-import { site } from "@/lib/site";
+import type { SiteInfo } from "@/lib/site";
 
 /**
  * Location card with a pin pointing at the restaurant.
@@ -13,7 +13,7 @@ import { site } from "@/lib/site";
  * localStorage). "Get directions" is a plain link: nothing reaches Google until
  * the visitor follows it.
  */
-export function ConsentMap() {
+export function ConsentMap({ site }: { site: SiteInfo }) {
   const [load, setLoad] = useState(false);
 
   const directions = (

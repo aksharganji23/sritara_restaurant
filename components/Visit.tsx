@@ -1,17 +1,17 @@
 import { Clock, MapPin, Phone, Utensils } from "lucide-react";
-import { site } from "@/lib/site";
+import type { SiteInfo } from "@/lib/site";
 import { Reveal } from "./Reveal";
 import { OpenStatus } from "./OpenStatus";
 import { ConsentMap } from "./ConsentMap";
 
-export function Visit() {
+export function Visit({ site }: { site: SiteInfo }) {
   return (
     <section id="visit" aria-labelledby="visit-title" className="mx-auto max-w-7xl px-5 py-28 sm:px-8">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
         <Reveal>
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-gold">Visit us</p>
           <h2 id="visit-title" className="mt-3 font-display text-4xl text-cream sm:text-5xl">Find your seat</h2>
-          <div className="mt-4"><OpenStatus /></div>
+          <div className="mt-4"><OpenStatus week={site.hoursWeek} /></div>
 
           <ul className="mt-10 space-y-7">
             <li className="flex gap-4">
@@ -37,26 +37,23 @@ export function Visit() {
               <div>
                 <h3 className="font-bold text-cream">Phone</h3>
                 <a href={`tel:${site.phoneE164}`} className="text-gold underline underline-offset-4">{site.phoneDisplay}</a>
-                <a
-                  href={site.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-1 block text-gold underline underline-offset-4"
-                >
-                  Chat on WhatsApp<span className="sr-only"> (opens in a new tab)</span>
-                </a>
-                              </div>
+                {site.whatsappLink && (
+                  <a href={site.whatsappLink} target="_blank" rel="noopener noreferrer" className="mt-1 block text-gold underline underline-offset-4">
+                    Chat on WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                )}
+              </div>
             </li>
             <li className="flex gap-4">
               <Utensils aria-hidden="true" className="mt-1 size-6 shrink-0 text-gold" />
               <div>
                 <h3 className="font-bold text-cream">Services</h3>
-                <p className="text-muted">{site.services.join(" · ")} · {site.priceRange}</p>
+                <p className="text-muted">{[...site.services, site.priceRange].filter(Boolean).join(" · ")}</p>
               </div>
             </li>
           </ul>
         </Reveal>
-        <Reveal delay={0.15}><ConsentMap /></Reveal>
+        <Reveal delay={0.15}><ConsentMap site={site} /></Reveal>
       </div>
     </section>
   );

@@ -3,10 +3,12 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "motion/react";
 import { Menu as MenuIcon, X, Phone } from "lucide-react";
-import { navLinks, site } from "@/lib/site";
-import { Logo } from "./Logo";
+import { navLinks } from "@/lib/site";
+import { BrandLogo } from "./BrandLogo";
 
-export function Header() {
+type Props = { name: string; phoneDisplay: string; phoneE164: string; announcement?: string };
+
+export function Header({ name, phoneDisplay, phoneE164, announcement }: Props) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY, scrollYProgress } = useScroll();
@@ -47,17 +49,19 @@ export function Header() {
         scrolled || open ? "border-b border-line/60 bg-ink/85 backdrop-blur-xl" : "bg-transparent"
       }`}
     >
+      {announcement && (
+        <p role="note" className="bg-gold px-5 py-2 text-center text-sm font-semibold text-gold-deep">
+          {announcement}
+        </p>
+      )}
       <motion.div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-0.5 origin-left bg-gold"
+        className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-gold"
         style={{ scaleX: scrollYProgress }}
       />
       <nav aria-label="Primary" className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="group flex items-center gap-3 text-gold" aria-label={`${site.name} — home`}>
-          <Logo className="size-9 transition-transform duration-700 group-hover:rotate-[72deg]" />
-          <span className="font-display text-xl tracking-wide text-cream">
-            Sritara <span className="text-gold italic">Classic</span>
-          </span>
+                <Link href="/" className="group rounded-lg" aria-label={`${name} — home`}>
+          <BrandLogo name={name} size="sm" className="transition-transform duration-500 group-hover:scale-[1.03]" />
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
@@ -75,11 +79,11 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <a
-            href={`tel:${site.phoneE164}`}
+            href={`tel:${phoneE164}`}
             className="hidden items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-bold text-gold-deep transition-transform hover:scale-105 sm:inline-flex"
           >
             <Phone aria-hidden="true" className="size-4" />
-            Call {site.phoneDisplay}
+            Call {phoneDisplay}
           </a>
           <button
             ref={toggleRef}
@@ -128,10 +132,10 @@ export function Header() {
               ))}
               <li className="pt-6">
                 <a
-                  href={`tel:${site.phoneE164}`}
+                  href={`tel:${phoneE164}`}
                   className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-bold text-gold-deep"
                 >
-                  <Phone aria-hidden="true" className="size-4" /> Call {site.phoneDisplay}
+                  <Phone aria-hidden="true" className="size-4" /> Call {phoneDisplay}
                 </a>
               </li>
             </ul>

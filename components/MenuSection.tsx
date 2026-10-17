@@ -2,11 +2,11 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Flame, Sparkles } from "lucide-react";
-import { menu } from "@/lib/site";
+import type { MenuCategory } from "@/lib/content/schema";
 import { Reveal } from "./Reveal";
 
 /** Accessible tabs (WAI-ARIA Authoring Practices): arrow keys, Home/End. */
-export function MenuSection() {
+export function MenuSection({ menu }: { menu: MenuCategory[] }) {
   const [active, setActive] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -24,7 +24,8 @@ export function MenuSection() {
     tabs.current[next]?.focus();
   };
 
-  const cat = menu[active];
+  const cat = menu[Math.min(active, menu.length - 1)];
+  if (!cat) return null;
 
   return (
     <section id="menu" aria-labelledby="menu-title" className="mx-auto max-w-7xl px-5 py-28 sm:px-8">
@@ -34,7 +35,7 @@ export function MenuSection() {
           Something for <span className="italic">every</span> table
         </h2>
         <p className="mt-4 max-w-2xl text-muted">
-          A taste of what we cook. Ask our staff for today&apos;s specials and current prices.
+          A taste of what we cook. Ask our staff about today&apos;s specials. Prices include taxes unless stated on your bill.
         </p>
       </Reveal>
 
@@ -75,7 +76,7 @@ export function MenuSection() {
           >
             {cat.items.map((item) => (
               <motion.li
-                key={item.name}
+                key={item.id}
                 variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
                 whileHover={{ y: -4 }}
                 className="group relative overflow-hidden rounded-2xl border border-line/70 bg-surface p-6 transition-colors hover:border-gold/60"
@@ -87,8 +88,11 @@ export function MenuSection() {
                       {item.name}
                       {item.telugu && <span lang="te" className="ml-2 font-sans text-base text-muted">{item.telugu}</span>}
                     </h3>
-                    <p className="mt-2 text-muted">{item.description}</p>
+                    {item.description && <p className="mt-2 text-muted">{item.description}</p>}
                   </div>
+                  {item.price !== null && (
+                    <p className="ml-auto shrink-0 font-display text-xl text-gold">₹{item.price}</p>
+                  )}
                   <span
                     className={`mt-1 grid size-5 shrink-0 place-items-center rounded-sm border-2 ${item.veg ? "border-leaf" : "border-ember"}`}
                     role="img"
@@ -104,7 +108,7 @@ export function MenuSection() {
                       <Sparkles aria-hidden="true" className="size-3.5" /> Guest favourite
                     </span>
                   )}
-                  {item.spice && (
+                  {item.spice > 0 && (
                     <span className="inline-flex items-center gap-1 text-ember">
                       <span className="sr-only">Spice level {item.spice} of 3</span>
                       {[...Array(item.spice)].map((_, i) => (

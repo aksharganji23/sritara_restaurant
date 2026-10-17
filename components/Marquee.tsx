@@ -1,7 +1,7 @@
-const items = ["Natukodi Bagara", "Mutton Bagara", "Paneer Shahi Korma", "Kamju Pitta", "Garlic Naan", "Veg Manchurian", "Dum Biryani"];
 
 /** Decorative scrolling ribbon. Hidden from screen readers (content repeats the menu). */
-export function Marquee() {
+export function Marquee({ items }: { items: string[] }) {
+  if (!items.length) return null;
   const row = [...items, ...items];
   return (
     <div aria-hidden="true" className="relative overflow-hidden border-y border-line/60 bg-surface py-5">

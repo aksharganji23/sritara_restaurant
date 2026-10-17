@@ -13,8 +13,13 @@ export default function Page() {
 
       <h2>1. Cookies we set</h2>
       <p>
-        <strong>None.</strong> This website does not set any cookies, and does not use analytics, advertising pixels,
-        fingerprinting or local storage to track you. That is why you don&apos;t see a cookie banner.
+        <strong>None for visitors.</strong> This website does not set any cookies for customers, and does not use
+        analytics, advertising pixels, fingerprinting or local storage to track you. That is why you don&apos;t see a
+        cookie banner.
+      </p>
+      <p>
+        Our own staff receive one strictly necessary cookie, <code>sritara_admin</code>, only when they sign in to the
+        restaurant&apos;s admin area. It keeps them signed in for up to 7 days and is never set for customers.
       </p>
 
       <h2>2. Third-party content you can choose to load</h2>

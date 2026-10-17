@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { reserve } from "@/app/actions/reserve";
 import type { FormState } from "@/lib/reservation-schema";
-import { site } from "@/lib/site";
 
 const initial: FormState = { status: "idle" };
 
@@ -13,7 +12,14 @@ const labels: Record<string, string> = {
   name: "Full name", phone: "Mobile number", date: "Date", time: "Time", guests: "Number of guests", notes: "Notes", consent: "Consent",
 };
 
-export function ReserveForm() {
+type Props = { name: string; phoneDisplay: string; phoneE164: string; maxGuests: number; maxDaysAhead: number };
+
+/** Today's date in India as YYYY-MM-DD (so late-night visitors don't see yesterday). */
+const indiaDate = (offsetDays = 0) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date(Date.now() + offsetDays * 86_400_000));
+
+export function ReserveForm({ name, phoneDisplay, phoneE164, maxGuests, maxDaysAhead }: Props) {
+  const site = { name, phoneDisplay, phoneE164 };
   const [state, action, pending] = useActionState(reserve, initial);
   const summaryRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
@@ -27,7 +33,8 @@ export function ReserveForm() {
     if (state.status === "success") successRef.current?.focus();
   }, [state]);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = indiaDate();
+  const lastDay = indiaDate(maxDaysAhead);
 
   if (state.status === "success") {
     return (
@@ -66,7 +73,7 @@ export function ReserveForm() {
     ) : null;
 
   return (
-    <form action={action} noValidate className="rounded-3xl border border-line/70 bg-surface p-6 sm:p-10">
+    <form key={JSON.stringify(v)} action={action} noValidate className="rounded-3xl border border-line/70 bg-surface p-6 sm:p-10">
       <AnimatePresence>
         {state.status === "error" && (
           <motion.div
@@ -114,18 +121,18 @@ export function ReserveForm() {
         </div>
         <div>
           <label htmlFor={`${uid}-date`} className="font-semibold text-cream">Date <span aria-hidden="true" className="text-gold">*</span></label>
-          <input {...field("date")} type="date" min={today} required defaultValue={v.date} className={`${input} [color-scheme:dark]`} />
+          <input {...field("date")} type="date" min={today} max={lastDay} required defaultValue={v.date} className={`${input} [color-scheme:dark]`} />
           <Err name="date" />
         </div>
         <div>
           <label htmlFor={`${uid}-time`} className="font-semibold text-cream">Time <span aria-hidden="true" className="text-gold">*</span></label>
-          <input {...field("time")} type="time" min="12:00" max="22:30" step={900} required defaultValue={v.time} className={`${input} [color-scheme:dark]`} />
+          <input {...field("time")} type="time" step={900} required defaultValue={v.time} className={`${input} [color-scheme:dark]`} />
           <Err name="time" />
         </div>
         <div className="sm:col-span-2">
           <label htmlFor={`${uid}-guests`} className="font-semibold text-cream">Number of guests <span aria-hidden="true" className="text-gold">*</span></label>
           <select {...field("guests")} required defaultValue={v.guests ?? "2"} className={input}>
-            {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+            {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
               <option key={n} value={n}>{n} {n === 1 ? "guest" : "guests"}</option>
             ))}
           </select>
